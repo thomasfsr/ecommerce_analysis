@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "ecommerce-analysis"
+version = "0.1.0"
+description = "analysis of various indices to build KPIs."
+authors = ["Thomás Freire"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
