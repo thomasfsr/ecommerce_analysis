@@ -19,7 +19,7 @@ def convert_to_parquet(path:str, output:str):
     for index, file in enumerate(listdir(path)):
         if not exists(f"{output}/{file.split('.')[0]}.parquet"):
             df = f"table{index}"
-            conn.execute(f" create table {df} as select * from read_csv('{join(path,file)}', AUTO_DETECT=TRUE)")
+            conn.execute(f" create table {df} as select * from read_csv('{join(path,file)}',header=True, auto_detect=True)")
             conn.execute(f"copy {df} TO '{output}/{file.split('.')[0]}.parquet' (FORMAT PARQUET)")
     conn.close()
 
