@@ -3,6 +3,9 @@ from os import listdir, makedirs, getenv
 from os.path import join, exists, basename
 from boto3 import client
 from dotenv import load_dotenv
+import psycopg
+from sqlalchemy import create_engine
+import pandas as pd
 
 def create_dir(output:str):
     """
@@ -25,6 +28,9 @@ def convert_to_parquet(path:str, output:str):
 
 
 def export_to_s3(folder:str):
+    """
+    Export the parquet files to the s3 bucket
+    """
     load_dotenv()
     aws_access_key_id = getenv('aws_access_key_id')
     aws_secret_access_key = getenv('aws_secret_access_key')
@@ -45,3 +51,27 @@ def export_to_s3(folder:str):
                 )
     except Exception as e:
         print(f'Error uploading file to S3: {e}')
+
+def export_to_postgre(parquet_file:str='parquet_files/olist_customers_dataset.parquet'):
+    """
+    Export to the PostgreSQL server in the render webservice
+    """
+    load_dotenv()
+    dbname=getenv('dbname')
+    user=getenv('user')
+    password=getenv('password')
+    host=getenv('host')
+    port = getenv('port')
+
+    file = parquet_file
+    df = pd.read_parquet(file)
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host
+    )
+    engine = create_engine(f'postgresql+psycopg://{user}:{password}@{host}:{port}/{dbname}')
+    table_name = 'olist_customers_dataset' 
+    df.to_sql(table_name, engine, index=False, if_exists='replace')
+    conn.close()
