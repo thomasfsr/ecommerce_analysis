@@ -13,6 +13,9 @@ load-dotenv = "^0.1.0"
 pandas = "^2.2.0"
 jupyter = "^1.0.0"
 pyarrow = "^15.0.0"
+psycopg = "^3.1.18"
+sqlalchemy = "^2.0.26"
+psycopg-binary = "^3.1.18"
 
 
 [tool.poetry.group.dev.dependencies]
