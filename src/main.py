@@ -52,7 +52,7 @@ def export_to_s3(folder:str):
     except Exception as e:
         print(f'Error uploading file to S3: {e}')
 
-def export_to_postgre(parquet_file:str='parquet_files/olist_customers_dataset.parquet'):
+def export_to_postgre(parquet_file:str='parquet_files/olist_order_payments_dataset.parquet'):
     """
     Export to the PostgreSQL server in the render webservice
     """
@@ -65,6 +65,7 @@ def export_to_postgre(parquet_file:str='parquet_files/olist_customers_dataset.pa
 
     file = parquet_file
     df = pd.read_parquet(file)
+    print(df.dtypes)
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -74,4 +75,29 @@ def export_to_postgre(parquet_file:str='parquet_files/olist_customers_dataset.pa
     engine = create_engine(f'postgresql+psycopg://{user}:{password}@{host}:{port}/{dbname}')
     table_name = 'olist_customers_dataset' 
     df.to_sql(table_name, engine, index=False, if_exists='replace')
+    conn.close()
+
+def export_to_postgre(input_dir:str='parquet_files'):
+    """
+    Export parquet files to the PostgreSQL that is hosted at render.com
+    """
+    load_dotenv()
+    dbname=getenv('dbname')
+    user=getenv('user')
+    password=getenv('password')
+    host=getenv('host')
+    port = getenv('port')
+
+    for file in listdir(input_dir):
+        df = pd.read_parquet(join(input_dir,file))
+        print(df.dtypes)
+        conn = psycopg.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host
+        )
+        engine = create_engine(f'postgresql+psycopg://{user}:{password}@{host}:{port}/{dbname}')
+        table_name = file.split('.')[0]
+        df.to_sql(table_name, engine, index=False, if_exists='replace')
     conn.close()

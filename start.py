@@ -6,3 +6,4 @@ output = 'parquet_files'
 create_dir(output=output)
 convert_to_parquet(path=path,output=output)
 export_to_s3(output)
+export_to_postgre()
