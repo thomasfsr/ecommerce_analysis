@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import psycopg
 from sqlalchemy import create_engine
 import pandas as pd
+from time import sleep
 
 def create_dir(output:str):
     """
@@ -102,8 +103,12 @@ def export_to_postgre(input_dir:str='parquet_files'):
         df.to_sql(table_name, engine, index=False, if_exists='replace')
     conn.close()
 
-def create_db(dbname:str, folder:str):
-    conn = duckdb.connect()
+def create_db(dbname:str, folder:str='database', output:str=None):
+    if output:
+        create_dir(output)
+        conn = duckdb.connect(f'{output}/{dbname}.db')
+    else:
+        conn = duckdb.connect(f'{dbname}.db')
     for file in listdir(folder):
         filename= file.split('.')[0]
         conn.execute(f" create table {filename} as select * from read_parquet('{join(folder,file)}')")
