@@ -1,4 +1,4 @@
-from duckdb import connect, execute
+import duckdb
 from os import listdir, makedirs, getenv
 from os.path import join, exists, basename
 from boto3 import client
@@ -18,7 +18,7 @@ def convert_to_parquet(path:str, output:str):
     """
     Convert to parquet csv files from a provided path to a provided output directory
     """
-    conn = connect(database=':memory:')
+    conn = duckdb.connect(database=':memory:')
     for index, file in enumerate(listdir(path)):
         if not exists(f"{output}/{file.split('.')[0]}.parquet"):
             df = f"table{index}"
@@ -100,4 +100,11 @@ def export_to_postgre(input_dir:str='parquet_files'):
         engine = create_engine(f'postgresql+psycopg://{user}:{password}@{host}:{port}/{dbname}')
         table_name = file.split('.')[0]
         df.to_sql(table_name, engine, index=False, if_exists='replace')
+    conn.close()
+
+def create_db(dbname:str, folder:str):
+    conn = duckdb.connect()
+    for file in listdir(folder):
+        filename= file.split('.')[0]
+        conn.execute(f" create table {filename} as select * from read_parquet('{join(folder,file)}')")
     conn.close()
