@@ -1,4 +1,4 @@
-CREATE TABLE analytics AS
+CREATE TABLE obt AS
 SELECT *
 FROM
     olist_order_items_dataset oi
@@ -13,4 +13,8 @@ LEFT JOIN
 LEFT JOIN
     olist_customers_dataset cd on od.customer_id = cd.customer_id
 LEFT JOIN
-    olist_order_reviews_dataset ord on od.order_id = ord.order_id
+    olist_order_reviews_dataset ord on od.order_id = ord.order_id;
+
+copy obt TO 'database/obt.parquet' (FORMAT PARQUET);
+
+drop table obt;
