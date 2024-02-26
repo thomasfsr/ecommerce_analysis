@@ -1,5 +1,5 @@
-CREATE TABLE obt AS
-SELECT *
+copy
+(SELECT *
 FROM
     olist_order_items_dataset oi
 LEFT JOIN
@@ -10,11 +10,8 @@ LEFT JOIN
     olist_sellers_dataset sd on oi.seller_id = sd.seller_id
 LEFT JOIN
     olist_order_payments_dataset op ON od.order_id = op.order_id
-LEFT JOIN
+/*LEFT JOIN
     olist_customers_dataset cd on od.customer_id = cd.customer_id
 LEFT JOIN
-    olist_order_reviews_dataset ord on od.order_id = ord.order_id;
-
-copy obt TO 'database/obt.parquet' (FORMAT PARQUET);
-
-drop table obt;
+    olist_order_reviews_dataset ord on od.order_id = ord.order_id*/)
+TO 'database/obt2.parquet' (FORMAT PARQUET)
