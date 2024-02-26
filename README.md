@@ -15,4 +15,7 @@ get in the directory:
 `cd ecommerce_analysis`  
 install dependencies:  
 `poetry install`  
-
+Open start.py and uncomment the functions you want to utilize. Also recommended to swap the path where the dataset was downloaded to your folder.  
+To use the terminal to run the query that creates the big table by opening the database created with duckdb in the terminal:  
+`duckdb database/ecommerce.db`  (opening the database)  
+`.read sql/query_create_odt_parquet.sql`  
